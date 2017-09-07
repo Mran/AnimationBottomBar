@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.mran.animationbottombar.MainActivity">
+
+  <com.mran.bottombar.AnimationBottomBar
+      android:layout_width="368dp"
+      android:layout_height="100dp"
+      android:id="@+id/bottom"
+      app:textColor="@color/colorAccent"
+      app:backgruond="@color/white"
+      app:textSize="16sp"
+      app:selectTextColor="@color/blue"
+      tools:layout_editor_absoluteY="0dp"
+      tools:layout_editor_absoluteX="8dp">
+
+  </com.mran.bottombar.AnimationBottomBar>
+
+</android.support.constraint.ConstraintLayout>

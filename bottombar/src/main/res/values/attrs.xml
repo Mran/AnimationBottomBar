@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="AnimationBottomBar">
+        <attr name="backgruond" format="color"/>
+        <attr name="textSize" format="dimension"/>
+        <attr name="textColor" format="color"/>
+        <attr name="selectTextColor" format="color"/>
+    </declare-styleable>
+</resources>
