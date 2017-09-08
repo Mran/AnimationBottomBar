@@ -9,16 +9,13 @@
     tools:context="com.mran.animationbottombar.MainActivity">
 
   <com.mran.bottombar.AnimationBottomBar
-      android:layout_width="368dp"
-      android:layout_height="100dp"
+      android:layout_width="match_parent"
+      android:layout_height="60dp"
       android:id="@+id/bottom"
       app:textColor="@color/colorAccent"
-      app:backgruond="@color/white"
-      app:textSize="16sp"
+      app:backgruond="@color/backgroud"
+      app:textSize="8sp"
       app:selectTextColor="@color/blue"
-      tools:layout_editor_absoluteY="0dp"
-      tools:layout_editor_absoluteX="8dp">
-
-  </com.mran.bottombar.AnimationBottomBar>
+    />
 
 </android.support.constraint.ConstraintLayout>

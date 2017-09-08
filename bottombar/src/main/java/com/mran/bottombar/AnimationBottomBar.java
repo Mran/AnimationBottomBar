@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +52,7 @@ public class AnimationBottomBar extends ViewGroup {
     private int[] itemcolors = {0xFFF93008, 0xFF73ADCE, 0xFFEDC15E, 0xFFDC6394, 0xFF6BCEB0};//记录每个item的颜色
     private int[] itemCenterX = {0, 0, 0, 0, 0};//记录每个item的中心位置
     private float[] itemScale = {0.5f, 0.5f, 0.5f, 0.5f, 0.5f};//记录每个item的缩放比例
+    private OnItemSelectListener mOnItemSelectListener;
     private AttributeSet mAttributeSet;
 
     public AnimationBottomBar(Context context) {
@@ -60,16 +62,16 @@ public class AnimationBottomBar extends ViewGroup {
 
     public AnimationBottomBar(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context,attrs);
+        init(context, attrs);
     }
 
     public AnimationBottomBar(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context,attrs);
+        init(context, attrs);
     }
 
 
-    private void init(Context context,AttributeSet attrs) {
+    private void init(Context context, AttributeSet attrs) {
         this.mContext = context;
         mAttributeSet = attrs;
         getAttrs();
@@ -79,9 +81,9 @@ public class AnimationBottomBar extends ViewGroup {
         mBottomAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-                TextView textView=(TextView)getChildAt(selectLastIndex+itemCount);
+                TextView textView = (TextView) getChildAt(selectLastIndex + itemCount);
                 textView.setTextColor(textColor);
-                TextView selectTextView=(TextView)getChildAt(selectIndex+itemCount);
+                TextView selectTextView = (TextView) getChildAt(selectIndex + itemCount);
                 selectTextView.setTextColor(selectTextColor);
             }
 
@@ -106,30 +108,33 @@ public class AnimationBottomBar extends ViewGroup {
         mBottomItemArrayList.add(bottomItem);
         return this;
     }
-int count=0;
+
+    int count = 0;
+
     public void build() throws Exception {
         itemCount = mBottomItemArrayList.size();
         if (itemCount > CHILDCOUNTMAX) {
             throw new Exception("The maximum number of items is 5");
         }
-        Log.d("AnimationBottomBar", "build: width"+getWidth());
-        Log.d("AnimationBottomBar", "build: count"+count++);
+        Log.d("AnimationBottomBar", "build: width" + getWidth());
+        Log.d("AnimationBottomBar", "build: count" + count++);
 
-        itemWidth=getLayoutParams().width/itemCount;
+        itemWidth = getLayoutParams().width / itemCount;
         for (BottomItem bottomItem : mBottomItemArrayList) {
             ImageView imageView = new ImageView(mContext);
             imageView.setImageResource(bottomItem.drawableRes);
             addView(imageView, itemWidth, 20);
         }
         for (BottomItem bottomItem : mBottomItemArrayList) {
-            TextView textView=new TextView(mContext);
+            TextView textView = new TextView(mContext);
             textView.setTextSize(textSize);
             textView.setText(bottomItem.title);
             textView.setTextColor(textColor);
-            addView(textView,itemWidth,20);
+            textView.setGravity(Gravity.CENTER);
+            addView(textView, itemWidth, 20);
         }
-        setSelectIndex(0);
-        Log.d("AnimationBottomBar", "build: itemwidth"+itemWidth);
+
+        Log.d("AnimationBottomBar", "build: itemwidth" + itemWidth);
     }
 
     //手动选择选择的item
@@ -139,29 +144,50 @@ int count=0;
         itemMoveRight = itemWidth * (selectIndex + 1);
         itemMoveLastRight = itemMoveRight;
         itemMoveLastLeft = itemMoveLeft;
-        itemMoveCenter=itemMoveLeft+itemWidth/2;
+        itemMoveCenter = itemMoveLeft + itemWidth / 2;
         selectLastIndex = i;
         postInvalidate();
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        Log.d("AnimationBottomBar", "onMeasure: count"+count++);
+        Log.d("AnimationBottomBar", "onMeasure: count" + count++);
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         childCount = getChildCount();
-        barWidth = getLayoutParams().width;//bottombar的宽度
-        barHeight = getLayoutParams().height;//--的高度
+        barWidth = getSize(300, widthMeasureSpec);//bottombar的宽度
+        barHeight = getSize(300, heightMeasureSpec);//--的高度
         itemWidth = barWidth / itemCount;
         for (int i = 0; i < childCount; i++) {
             View childView = getChildAt(i);
             measureChild(childView, widthMeasureSpec, heightMeasureSpec);
+            childView.getLayoutParams().width = itemWidth;
         }
+        Log.d("AnimationBottomBar", "onMeasure: barWidth" + barWidth);
+        setSelectIndex(0);
     }
 
+    private int getSize(int defaultsize, int measureSpec) {
+
+        int mySize = defaultsize;
+        int mode = MeasureSpec.getMode(measureSpec);
+        int size = MeasureSpec.getSize(measureSpec);
+        switch (mode) {
+            case MeasureSpec.UNSPECIFIED:
+                mySize = defaultsize;
+                break;
+            case MeasureSpec.AT_MOST:
+                mySize = size;
+                break;
+            case MeasureSpec.EXACTLY:
+                mySize = size;
+                break;
+        }
+        return mySize;
+    }
 
     @Override
     protected void onDraw(Canvas canvas) {
-//        mPaint.setStrokeWidth(20);
+
         //绘制item颜色
         for (int i = 0; i < 5; i++) {
             mPaint.setColor(itemcolors[i]);
@@ -174,20 +200,19 @@ int count=0;
         canvas.drawRect(itemMoveRight, 0, itemWidth * 5, barHeight, mPaint);
         canvas.save();
         for (int i = 0; i < itemCount; i++) {
-            int deltaX=Math.abs(itemMoveCenter-itemCenterX[i]);//获得当前item移动中心点和item固定中心点的距离
-            if (deltaX<itemWidth){
-                itemScale[i]= (float) (-0.5*deltaX/itemWidth+1);//当距离小于一个item的宽度时调整item的缩放系数
-            }
-            else itemScale[i]=0.5f;//非选中的item的缩放系数固定为0.5
+            int deltaX = Math.abs(itemMoveCenter - itemCenterX[i]);//获得当前item移动中心点和item固定中心点的距离
+            if (deltaX < itemWidth) {
+                itemScale[i] = (float) (-0.5 * deltaX / itemWidth + 1);//当距离小于一个item的宽度时调整item的缩放系数
+            } else itemScale[i] = 0.5f;//非选中的item的缩放系数固定为0.5
             //对item的大小进行调整
             View childImageView = getChildAt(i);
             childImageView.setScaleX(itemScale[i]);
             childImageView.setScaleY(itemScale[i]);
-            View childTextView = getChildAt(itemCount+i);
+            View childTextView = getChildAt(itemCount + i);
             childTextView.setScaleX(itemScale[i]);
             childTextView.setScaleY(itemScale[i]);
         }
-        Log.d("AnimationBottomBar", "onDraw: +itemScale"+selectIndex+"   "+itemScale[selectIndex]);
+        Log.d("AnimationBottomBar", "onDraw: +itemScale" + selectIndex + "   " + itemScale[selectIndex]);
         super.onDraw(canvas);
 
     }
@@ -195,19 +220,15 @@ int count=0;
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        Log.d("AnimationBottomBar", "onLayout: count"+count++);
-
-
+        Log.d("AnimationBottomBar", "onLayout: count" + count++);
 
         for (int i = 0; i < itemCount; i++) {//遍历每一个item,放置item的位置
             itemCenterX[i] = (int) (itemWidth * (i + 0.5));//记录每个item的中心位置
 
             View childImageView = getChildAt(i);
-//            childImageView.setTag("childimage");
             childImageView.layout(itemWidth * i, 0, itemWidth * (i + 1), 100);
-            View childTextView=getChildAt(itemCount+i);
-            childTextView.layout(itemWidth * i+childTextView.getWidth()/4,100,itemWidth * (i + 1),barHeight);
-//            childTextView.setTag("childText");
+            View childTextView = getChildAt(itemCount + i);
+            childTextView.layout(itemWidth * i + childTextView.getWidth() / 4, 100, itemWidth * (i + 1), barHeight);
 
         }
     }
@@ -224,6 +245,7 @@ int count=0;
             case MotionEvent.ACTION_UP:
                 if (ev.getX() / itemWidth == touchDownX / itemWidth) {
                     selectIndex = (int) (ev.getX() / itemWidth);
+                    sendListenerPostion(selectIndex);
                     //点击时开始动画
                     startAnimation(mBottomAnimation);
                 }
@@ -232,6 +254,7 @@ int count=0;
         }
         return true;
     }
+
     private void getAttrs() {
         TypedArray typedArray = mContext.obtainStyledAttributes(mAttributeSet, R.styleable.AnimationBottomBar);
 
@@ -240,7 +263,24 @@ int count=0;
         textSize = typedArray.getDimension(R.styleable.AnimationBottomBar_textSize, 25.0f);
         textColor = typedArray.getColor(R.styleable.AnimationBottomBar_textColor, 0xffffff);
         selectTextColor = typedArray.getColor(R.styleable.AnimationBottomBar_selectTextColor, 0x639fff);
+        Log.d("AnimationBottomBar", "getAttrs:textSize " + textSize);
+        typedArray.recycle();
     }
+
+    public AnimationBottomBar setItemSelectListener(OnItemSelectListener onItemSelectListener) {
+        this.mOnItemSelectListener = onItemSelectListener;
+        return this;
+    }
+
+    private void sendListenerPostion(int position) {
+        if (mOnItemSelectListener != null)
+            mOnItemSelectListener.onItemSelectListener(position);
+    }
+
+    public interface OnItemSelectListener {
+        void onItemSelectListener(int position);
+    }
+
     private class BottomAnimation extends Animation {
         @Override
         protected void applyTransformation(float interpolatedTime, Transformation t) {
@@ -251,7 +291,7 @@ int count=0;
             if (position < 0) {//向左滑动
                 itemMoveRight = (int) (itemMoveLastRight + interpolatedTime * itemWidth * position);
                 itemMoveLeft = (int) (itemMoveLastLeft + setFirst(interpolatedTime) * itemWidth * position);
-                itemMoveCenter = (int) (itemMoveLastRight + interpolatedTime * itemWidth * position) -itemWidth / 2;//记录中心点移动的位置
+                itemMoveCenter = (int) (itemMoveLastRight + interpolatedTime * itemWidth * position) - itemWidth / 2;//记录中心点移动的位置
             } else {//向右滑动
 
                 itemMoveRight = (int) (itemMoveLastRight + setFirst(interpolatedTime) * itemWidth * position);

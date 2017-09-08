@@ -5,6 +5,7 @@ just like this
   
 ![](http://oe38oe3ti.bkt.clouddn.com/17-9-6/16156701.jpg)
 # How to use
+in your activity xml :
 ```xml
  <com.mran.bottombar.AnimationBottomBar
       android:layout_width="match_parent"
@@ -16,6 +17,7 @@ just like this
       app:selectTextColor="@color/blue"
   />
 ```
+In your class
 ```java
  AnimationBottomBar mAnimationBottomBar;
  mAnimationBottomBar = (AnimationBottomBar) findViewById(R.id.bottom);
@@ -26,3 +28,4 @@ just like this
                     .addItem(new BottomItem(R.drawable.h, "five"))
                     .build();
 ```
+Add TabSelectedListener
