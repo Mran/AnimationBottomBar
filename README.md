@@ -28,4 +28,14 @@ In your class
                     .addItem(new BottomItem(R.drawable.h, "five"))
                     .build();
 ```
-Add TabSelectedListener
+Add itemSelectedListener
+```java
+mAnimationBottomBar.setItemSelectListener(new AnimationBottomBar.OnItemSelectListener() {
+    @Override
+    public void onItemSelectListener(int position) {
+        /*do something here*/
+    }
+});
+```
+# License
+[Apache](http://www.apache.org/licenses/LICENSE-2.0.html)
