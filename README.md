@@ -6,6 +6,7 @@ just like this
 ![](http://oe38oe3ti.bkt.clouddn.com/17-9-6/16156701.jpg)
 
 but i make it a little different
+
 ![](http://oe38oe3ti.bkt.clouddn.com/17-9-8/55867838.jpg)
 
 and if you want to know how to make it ,you can see [this](https://mran.github.io/2017/09/08/%E5%81%9A%E4%B8%80%E4%B8%AAbottomBar/)
