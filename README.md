@@ -4,9 +4,12 @@ I saw a awesome bottomBar Design from [dribbble](https://dribbble.com/shots/2071
 just like this
   
 ![](http://oe38oe3ti.bkt.clouddn.com/17-9-6/16156701.jpg)
+
 but i make it a little different
-and if you want to know how to make it ,you can see [this](https://mran.github.io/2017/09/08/%E5%81%9A%E4%B8%80%E4%B8%AAbottomBar/)
 ![](http://oe38oe3ti.bkt.clouddn.com/17-9-8/53454480.jpg)
+
+and if you want to know how to make it ,you can see [this](https://mran.github.io/2017/09/08/%E5%81%9A%E4%B8%80%E4%B8%AAbottomBar/)
+
 you can push issue to make it better,i'm happy to help you
 # How to use
 in your activity xml :
